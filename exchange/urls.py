@@ -14,6 +14,7 @@ urlpatterns = [
 
     # Transaction
     path('transaction_list/', views.transaction_list,name='transaction_list'),
-#   
+    path('transaction_detail/<int:pk>/',views.transaction_detail, name='transaction_detail'),
+   
 ]
 

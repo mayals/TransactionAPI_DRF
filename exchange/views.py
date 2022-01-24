@@ -41,11 +41,14 @@ class CurrencyRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
     lookup_field = 'pk'
 
 
-
+# https://www.youtube.com/watch?v=dunf5IqxRaA&list=PLLxk3TkuAYnrO32ABtQyw2hLRWt1BUrhj
 # https://www.django-rest-framework.org/api-guide/views/#function-based-views
+# https://www.django-rest-framework.org/tutorial/2-requests-and-responses/#wrapping-api-views
 ############################### Transaction ##############################
+
 @api_view(http_method_names=['GET', 'POST'])
 def transaction_list(request, format=None):
+    
     # GET
     if request.method == 'GET':
         queryset = Transaction.objects.all()
@@ -63,6 +66,33 @@ def transaction_list(request, format=None):
 
 
 
+
+
+@api_view(http_method_names=['GET','PUT','DELETE'])
+def transaction_detail(request, pk):
+    
+    try:
+        transaction = Transaction.objects.get(pk=pk) # instance object
+    except Transaction.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    # GET # retreive
+    if request.method == 'GET':
+        serializer = TransactionSerializer(instance=transaction)
+        return Response(serializer.data)
+    
+    # PUT
+    elif request.method == 'PUT':
+        serializer = TransactionSerializer(instance=transaction, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # DELETE
+    elif request.method == 'DELETE':
+        transaction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
