@@ -1,9 +1,9 @@
 from .models import Category, Currency, Transaction
 from .serializers import CategorySerializer, CurrencySerializer,TransactionSerializer 
-
+from rest_framework.pagination import PageNumberPagination
 # generics
 from rest_framework import generics
-
+from rest_framework import pagination
 
 # api_view
 from rest_framework.decorators import api_view
@@ -16,6 +16,7 @@ from rest_framework import status
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    pagination_class = PageNumberPagination # pagination
 
 
 class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -33,6 +34,7 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 class CurrencyListCreateAPIView(generics.ListCreateAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
+    pagination_class = PageNumberPagination  # pagination
 
 
 class CurrencyRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -41,9 +43,23 @@ class CurrencyRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
     lookup_field = 'pk'
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+# https://docs.djangoproject.com/en/4.0/ref/models/querysets/#select-related
 # https://www.youtube.com/watch?v=dunf5IqxRaA&list=PLLxk3TkuAYnrO32ABtQyw2hLRWt1BUrhj
 # https://www.django-rest-framework.org/api-guide/views/#function-based-views
 # https://www.django-rest-framework.org/tutorial/2-requests-and-responses/#wrapping-api-views
+# https://stackoverflow.com/questions/34043378/how-to-paginate-response-from-function-based-view-of-django-rest-framework
 ############################### Transaction ##############################
 
 @api_view(http_method_names=['GET', 'POST'])
@@ -51,10 +67,20 @@ def transaction_list(request, format=None):
     
     # GET
     if request.method == 'GET':
-        queryset = Transaction.objects.all()
-        serializer = TransactionSerializer(queryset, many=True)
-        return Response(serializer.data)
+        
+        queryset = Transaction.objects.all().select_related('category','currency').order_by('-date_created')
 
+        # paginator #################################
+        paginator = PageNumberPagination()
+        paginator.page_size = 4
+        queryset_with_paginate = paginator.paginate_queryset(queryset, request)
+        serializer = TransactionSerializer(queryset_with_paginate, many=True)
+        return paginator.get_paginated_response(serializer.data)
+       
+
+   
+   
+   
     # POST
     elif request.method == 'POST':
         serializer = TransactionSerializer(data=request.data)
@@ -105,60 +131,3 @@ def transaction_detail(request, pk):
 
 
 
-# class TransactionViewSet(viewsets.ViewSet):
-#     queryset = Transaction.objects.all()
-#     from django.shortcuts import get_object_or_404
-#     def list(self, request):
-#         queryset = Transaction.objects.all()
-#         serializer = TransactionSerializer(queryset, many=True)
-#         return Response(serializer.data)
-
-#     def retrieve(self, request, pk=None):
-#         queryset = Transaction.objects.all()
-#         transection = get_object_or_404(queryset, pk=pk)
-#         serializer = TransactionSerializer(transection)
-#         return Response(serializer.data)
-    
-    
-    
-    # transaction class is has 2 type acording to action read or write,read_only=True or false  :
-
-    # def get_serializer_class(self):
-    #     if self.action in ('list', 'retrieve'):
-    #         return ReadTransactionSerializer
-    #     return WriteTransactionSerializer
-
-
-
-
-
-
-
-
-
-
-
-
-# ############################### Transaction ##############################
-# class TransactionListCreateAPIView(generics.ListCreateAPIView):
-#     queryset = Transaction.objects.all()
-#     # transaction class is has 2 type acording to action read or write,read_only=True or false  :
-#     def get_serializer_class(self):
-#         if self.action in ('list', 'retrieve'):
-#             return ReadTransactionSerializer
-#         return WriteTransactionSerializer
-
-
-
-
-
-
-
-
-# class TransactionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Transaction.objects.all()
-#     # transaction class is has 2 type acording to action read or write,read_only=True or false :
-#     def get_serializer_class(self):
-#         if self.action in ('list', 'retrieve'):
-#             return ReadTransactionSerializer
-#         return WriteTransactionSerializer
