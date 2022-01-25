@@ -37,12 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-   
-    # https://www.django-rest-framework.org/
-    'rest_framework',
-    
     #local
     'exchange.apps.ExchangeConfig',
+    # https://www.django-rest-framework.org/
+    'rest_framework',
 ]
 
 

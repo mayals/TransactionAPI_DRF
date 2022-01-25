@@ -1,23 +1,28 @@
 from .models import Category, Currency, Transaction
 from .serializers import CategorySerializer, CurrencySerializer,TransactionSerializer 
-from rest_framework.pagination import PageNumberPagination
 # generics
 from rest_framework import generics
-from rest_framework import pagination
-
 # api_view
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+# pagination
+from rest_framework import pagination
+from rest_framework.pagination import PageNumberPagination
+# filtering
+from rest_framework import filters
 
 
 
+# http://www.tomchristie.com/rest-framework-2-docs/api-guide/filtering
 ############################## Category ##########################################
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination # pagination
-
+    filter_backends = (filters.SearchFilter,filters.OrderingFilter)    # filtering # ordering
+    search_fields = ('name',)     # filtering
+    ordering_fields = ('name',)   # ordering
 
 class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
@@ -35,6 +40,12 @@ class CurrencyListCreateAPIView(generics.ListCreateAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     pagination_class = PageNumberPagination  # pagination
+   
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter) # filtering # ordering
+    search_fields = ('name', 'code',)     # filtering
+    ordering_fields = ('name','code',)    # ordering
+
+
 
 
 class CurrencyRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
