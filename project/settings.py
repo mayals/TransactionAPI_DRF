@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'exchange.apps.ExchangeConfig',
     # https://www.django-rest-framework.org/
     'rest_framework',
+    # https://www.django-rest-framework.org/api-guide/filtering /  # djangofilterbackend
+    'django_filters',
 ]
 
 

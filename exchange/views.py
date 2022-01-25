@@ -11,6 +11,8 @@ from rest_framework import pagination
 from rest_framework.pagination import PageNumberPagination
 # filtering
 from rest_framework import filters
+# using django_filters library
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -20,9 +22,17 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination # pagination
-    filter_backends = (filters.SearchFilter,filters.OrderingFilter)    # filtering # ordering
+    
+    #filtering #ordering by using default django restframe work filtering and ordering
+    filter_backends = (filters.SearchFilter,filters.OrderingFilter)    
     search_fields = ('name',)     # filtering
     ordering_fields = ('name',)   # ordering
+    
+    # filtering by using #django_filters library
+    filterset_fields = ['category', 'in_stock']
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name']
+
 
 class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
@@ -41,10 +51,15 @@ class CurrencyListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CurrencySerializer
     pagination_class = PageNumberPagination  # pagination
    
+    #filtering #ordering by using default django restframe work filtering and ordering
     filter_backends = (filters.SearchFilter, filters.OrderingFilter) # filtering # ordering
     search_fields = ('name', 'code',)     # filtering
     ordering_fields = ('name','code',)    # ordering
-
+   
+    # filtering by using #django_filters library  ## work ok but no odrdering!!
+    # filterset_fields = ['name', 'code']
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['name', 'code']
 
 
 
