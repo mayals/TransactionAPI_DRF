@@ -1,10 +1,12 @@
 from django.urls import path
 from . import views
 
+app_name='exchange'
 urlpatterns = [
     # Category
     path('CategoryListCreate/', views.CategoryListCreateAPIView.as_view(),name='CategoryListCreate'),
-    path('CategoryRetrieveUpdateDestroy/<int:pk>/',views.CategoryRetrieveUpdateDestroyAPIView.as_view(), name='CategoryRetrieveUpdateDestroy'),
+    path('CategoryRetrieveUpdateDestroy/<int:pk>/',
+         views.CategoryRetrieveUpdateDestroyAPIView.as_view(), name='category-detail'),
 
 
     # Currency

@@ -20,6 +20,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 ############################## Category ##########################################
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
+ 
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination # pagination
     
