@@ -47,7 +47,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     # category = serializers.SlugRelatedField(slug_field='name',queryset=Category.objects.all()) ..also work ok 
     #currency = serializers.SlugRelatedField(slug_field='code', queryset=Currency.objects.all()) ..also work ok
 
-    # url = serializers.HyperlinkedIdentityField(view_name="exchange:transaction-detail",) # url not work !
+    # url = serializers.HyperlinkedIdentityField(view_name="exchange:transaction-detail",) # url not work because pk is uuid! must return to default pk to work ok !
 
     class Meta:
         model = Transaction
