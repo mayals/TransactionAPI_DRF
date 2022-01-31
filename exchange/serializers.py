@@ -18,11 +18,11 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CurrencySerializer(serializers.HyperlinkedModelSerializer):
-    # transactions = serializers.SlugRelatedField(many=True, read_only=True, slug_field='description')
+    transactions = serializers.SlugRelatedField(many=True, read_only=True, slug_field='description')
     url = serializers.HyperlinkedIdentityField(view_name="exchange:currency-detail",)
     class Meta:
         model = Currency
-        fields = ('url', 'pk', 'name', 'code', )
+        fields = ('url', 'pk', 'name', 'code', 'transactions',)
         extra_kwargs = {
                     'url': {
                         'view_name': 'exchange:currency-detail',
