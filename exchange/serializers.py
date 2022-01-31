@@ -12,35 +12,52 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
                     'url': {
                         'view_name': 'exchange:category-detail',
-                        'lookup_field' :'name'
+                        'lookup_field' :'pk'
                         },
-        }
+                    }
 
 
-
-
-class CurrencySerializer(serializers.ModelSerializer):
+class CurrencySerializer(serializers.HyperlinkedModelSerializer):
+    # transactions = serializers.SlugRelatedField(many=True, read_only=True, slug_field='description')
+    url = serializers.HyperlinkedIdentityField(view_name="exchange:currency-detail",)
     class Meta:
         model = Currency
-        fields = ('pk','name','code',)
+        fields = ('url', 'pk', 'name', 'code', )
+        extra_kwargs = {
+                    'url': {
+                        'view_name': 'exchange:currency-detail',
+                        'lookup_field': 'pk'
+                    },
+                }
+
 
 # https://www.django-rest-framework.org/api-guide/serializers/#writable-nested-representations
 # https://www.django-rest-framework.org/api-guide/serializers/#dealing-with-multiple-objects
+#Django RESTful Web Services book page 153
+
 class TransactionSerializer(serializers.ModelSerializer):
     # https://www.django-rest-framework.org/api-guide/relations/#serializer-relations
     # to show this field as readable way  not  as number,also inter data as word
-    category = serializers.SlugRelatedField(many=False, read_only=True, slug_field='name')
-    currency = serializers.SlugRelatedField(many=False, read_only=True, slug_field='code')
-
+    category = serializers.SlugRelatedField(queryset=Category.objects.all(), slug_field='name')  # category is foreign key field
+    currency = serializers.SlugRelatedField(queryset=Currency.objects.all(), slug_field='code')  # currency is foreign key field
+    
 
     # https://www.youtube.com/watch?v=dunf5IqxRaA&list=PLLxk3TkuAYnrO32ABtQyw2hLRWt1BUrhj
-    # to show this field as readable way  not  as number,also inter data as word
+    # category & currency  foreign key fields 
     # category = serializers.SlugRelatedField(slug_field='name',queryset=Category.objects.all()) ..also work ok 
     #currency = serializers.SlugRelatedField(slug_field='code', queryset=Currency.objects.all()) ..also work ok
+
+    # url = serializers.HyperlinkedIdentityField(view_name="exchange:transaction-detail",) # url not work !
 
     class Meta:
         model = Transaction
         fields = ('pk','uuid','category', 'currency','date_created', 'amount', 'description',)
+        # extra_kwargs = {
+        #     'url': {
+        #         # 'view_name': 'exchange:transaction-detail',
+        #         'lookup_field': 'pk'
+        #     },
+        # }
 
 
 

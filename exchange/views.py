@@ -101,7 +101,7 @@ def transaction_list(request, format=None):
         paginator = PageNumberPagination()
         paginator.page_size = 4
         queryset_with_paginate = paginator.paginate_queryset(queryset, request)
-        serializer = TransactionSerializer(queryset_with_paginate, many=True)
+        serializer = TransactionSerializer(queryset_with_paginate, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
        
 
@@ -111,7 +111,6 @@ def transaction_list(request, format=None):
     # POST
     elif request.method == 'POST':
         serializer = TransactionSerializer(data=request.data)
-    
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -132,14 +131,14 @@ def transaction_detail(request, pk):
     # GET # retreive
     if request.method == 'GET':
         serializer = TransactionSerializer(instance=transaction)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
     
     # PUT
     elif request.method == 'PUT':
         serializer = TransactionSerializer(instance=transaction, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     # DELETE
